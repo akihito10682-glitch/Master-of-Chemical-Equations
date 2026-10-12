@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>化学反応式 係数マスター</title>
+<style>
+:root{--bg:#f6f8fb;--fg:#1d2733;--cd:#fff;--bd:#d5dce6;--ac:#2563eb;--ok:#16a34a;--ng:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151c;--fg:#e6ebf2;--cd:#1a222d;--bd:#33404f;--ac:#60a5fa}}
+:root[data-theme="dark"]{--bg:#10151c;--fg:#e6ebf2;--cd:#1a222d;--bd:#33404f;--ac:#60a5fa}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.5}
+#app{max-width:860px;margin:0 auto;padding:16px}
+h1{text-align:center;margin:28px 0 4px}h2{margin:8px 0}h3{margin:18px 0 6px}
+.s{text-align:center;opacity:.75}
+button,select{font:inherit;color:inherit;background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--ac)}
+.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.g{display:grid;gap:14px;margin:26px 0}.big{padding:26px;font-size:1.3rem;font-weight:700}
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.cd{text-align:left;display:flex;flex-direction:column;gap:2px}.cd span{font-size:.9rem;opacity:.85}.cd small{opacity:.6}
+.nv{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:20px 0}
+.eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0}
+.sp{text-align:center}.fm{font-size:1.25rem;font-weight:700;margin-top:4px}.ar,.pl{font-size:1.4rem;padding:0 4px}
+.ct{display:flex;align-items:center;gap:4px;justify-content:center}.ct button{padding:2px 10px}.ct b{min-width:30px;font-size:1.3rem;border-bottom:2px solid var(--ac)}
+.pt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bx{background:var(--cd);border:2px solid var(--bd);border-radius:12px;padding:8px;min-height:130px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+.bx h4{width:100%;margin:0;font-size:.85rem;opacity:.7}
+.mo{display:inline-flex;flex-wrap:wrap;max-width:84px;gap:1px;padding:3px;border-radius:14px;background:rgba(127,127,127,.12)}
+.mo i{width:20px;height:20px;border-radius:50%;font:700 9px/20px sans-serif;text-align:center;font-style:normal;color:#fff}
+.hd{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;opacity:.85}
+.msg{text-align:center;font-size:1.4rem;font-weight:800;margin:14px 0;min-height:2rem}
+.ok{color:var(--ok)}.ng{color:var(--ng)}.hint{font-size:1rem;font-weight:400;opacity:.7}
+@media(max-width:520px){.pt{grid-template-columns:1fr}}
+</style></head><body><div id="app"></div>
+<script>
+const raw=[
+['炭素の完全燃焼','燃焼',1,'C+O2>CO2','1,1,1'],
+['一酸化炭素の燃焼','燃焼',1,'CO+O2>CO2','2,1,2'],
+['水素の燃焼（水の生成）','燃焼',1,'H2+O2>H2O','2,1,2'],
+['塩酸と水酸化ナトリウムの中和','中和',1,'HCl+NaOH>NaCl+H2O','1,1,1,1'],
+['酢酸と水酸化ナトリウムの中和','中和',1,'CH3COOH+NaOH>CH3COONa+H2O','1,1,1,1'],
+['塩化銀の沈殿（白）','沈殿',1,'NaCl+AgNO3>AgCl↓+NaNO3','1,1,1,1'],
+['炭酸カルシウムの沈殿（白）','沈殿',1,'Ca(OH)2+CO2>CaCO3↓+H2O','1,1,1,1'],
+['亜鉛と希硫酸（水素の発生）','酸化還元',1,'Zn+H2SO4>ZnSO4+H2','1,1,1,1'],
+['二酸化硫黄の発生','気体発生',1,'Na2SO3+H2SO4>Na2SO4+H2O+SO2','1,1,1,1,1'],
+['メタンの完全燃焼','燃焼',2,'CH4+O2>CO2+H2O','1,2,1,2'],
+['エタノールの完全燃焼','燃焼',2,'C2H5OH+O2>CO2+H2O','1,3,2,3'],
+['硫酸と水酸化ナトリウムの中和','中和',2,'H2SO4+NaOH>Na2SO4+H2O','1,2,1,2'],
+['硫酸バリウムの沈殿（白）','沈殿',2,'H2SO4+Ba(OH)2>BaSO4↓+H2O','1,1,1,2'],
+['水酸化銅(II)の沈殿（青白）','沈殿',2,'CuSO4+NaOH>Cu(OH)2↓+Na2SO4','1,2,1,1'],
+['水酸化鉄(III)の沈殿（赤褐）','沈殿',2,'FeCl3+NaOH>Fe(OH)3↓+NaCl','1,3,1,3'],
+['二酸化炭素の発生（石灰石＋塩酸）','気体発生',2,'CaCO3+HCl>CaCl2+H2O+CO2','1,2,1,1,1'],
+['アンモニアの発生','気体発生',3,'NH4Cl+Ca(OH)2>CaCl2+H2O+NH3','2,1,1,2,2'],
+['銅と濃硝酸の反応','酸化還元',3,'Cu+HNO3>Cu(NO3)2+H2O+NO2','1,4,1,2,2'],
+['銅と希硝酸の反応','酸化還元',3,'Cu+HNO3>Cu(NO3)2+H2O+NO','3,8,3,4,2'],
+['過マンガン酸カリウムと過酸化水素','酸化還元',3,'KMnO4+H2O2+H2SO4>K2SO4+MnSO4+H2O+O2','2,5,3,1,2,8,5']];
+const D=raw.map(([n,c,l,e,k])=>{const[a,b]=e.split('>'),re=a.split('+'),pr=b.split('+'),f=[...re,...pr];
+return{n,c,l,f,nr:re.length,k:k.split(',').map(Number),re:re.map((_,i)=>i),pr:pr.map((_,i)=>i+re.length)}});
+const $=id=>document.getElementById(id),A=$('app');let S={lv:0};
+const fh=f=>f.replace(/(\d+)/g,'<sub>$1</sub>');
+const es=(r,c)=>r.f.map((f,i)=>(i?(i==r.nr?' → ':' + '):'')+(c&&c[i]>1?c[i]:'')+fh(f)).join('');
+function parse(f){f=f.replace('↓','');const s=[{}];let i=0;const num=()=>{const m=f.slice(i).match(/^\d+/);if(!m)return 1;i+=m[0].length;return+m[0]};
+const add=(o,k,n)=>o[k]=(o[k]||0)+n;
+while(i<f.length){const c=f[i];if(c=='('){s.push({});i++}else if(c==')'){i++;const n=num(),t=s.pop();for(const k in t)add(s[s.length-1],k,t[k]*n)}
+else{const m=f.slice(i).match(/^[A-Z][a-z]?/)[0];i+=m.length;add(s[s.length-1],m,num())}}return s[0]}
+const C={H:'#e8e8e8',C:'#555',O:'#e5483f',N:'#3b6fe0',Na:'#9b5de5',Cl:'#2fb344',Ag:'#9aa',S:'#d4a900',Ba:'#2a9d8f',Ca:'#f4a261',Cu:'#c8702a',Fe:'#8d5524',K:'#c77dff',Mn:'#b5179e',Zn:'#778da9'};
+const mol=f=>{const a=parse(f);let h='<span class=mo>';for(const k in a)for(let j=0;j<a[k];j++)h+=`<i style="background:${C[k]||'#888'};${k=='H'?'color:#333':''}">${k}</i>`;return h+'</span>'};
+const box=(t,ids)=>{let h=`<div class=bx><h4>${t}</h4>`;ids.forEach(i=>{for(let j=0;j<S.co[i];j++)h+=mol(S.rx.f[i])});return h+'</div>'};
+const same=()=>S.co.every((v,i)=>v==S.rx.k[i]);
+function atoms(ids){const o={};ids.forEach(i=>{const a=parse(S.rx.f[i]);for(const k in a)o[k]=(o[k]||0)+a[k]*S.co[i]});return o}
+function balanced(){if(S.co.some(v=>!v))return false;const L=atoms(S.rx.re),R=atoms(S.rx.pr);return Object.keys(L).length==Object.keys(R).length&&Object.keys(L).every(k=>L[k]==R[k])}
+function home(){A.innerHTML=`<h1>化学反応式 係数マスター</h1><p class=s>粒子のモデルを見ながら、反応式の係数を決める力を身につけよう（化学基礎）</p><div class=g><button class=big onclick=plist()>🧪 練習ページ</button><button class=big onclick=tmenu()>📝 テストページ</button></div>`}
+function plist(){let h='<h2>練習：反応を選ぼう</h2>';[1,2,3].forEach(l=>{h+=`<h3>${'★'.repeat(l)} ${['','やさしい','ふつう','むずかしい'][l]}</h3><div class=g2>`;D.forEach((r,i)=>{if(r.l==l)h+=`<button class=cd onclick="play('p',${i})"><small>${r.c}</small><b>${r.n}</b><span>${es(r)}</span></button>`});h+='</div>'});A.innerHTML=h+'<div class=nv><button onclick=home()>ホームに戻る</button></div>'}
+function tmenu(){A.innerHTML=`<h2>テスト</h2><p>難易度：<select id=lv><option value=0>すべて</option><option value=1>★ やさしい</option><option value=2>★★ ふつう</option><option value=3>★★★ むずかしい</option></select></p><div class=g><button class=big onclick="start('t')">📝 テスト（1問ずつ）</button><h3 style="margin:0">エクストラステージ</h3><button class=big onclick="start('e')">♾️ エンドレスモード<br><small>間違えるまで続く！</small></button><button class=big onclick="start('n')">🔬 粒子なしモード<br><small>係数だけで解く・1問勝負</small></button></div><div class=nv><button onclick=home()>ホームに戻る</button></div>`;$('lv').value=S.lv}
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const pool=()=>D.map((r,i)=>i).filter(i=>!S.lv||D[i].l==S.lv);
+function start(m){S.lv=+$('lv').value;S.m=m;S.q=0;S.sc=0;newQ()}
+function newQ(){let i;{const p=pool().filter(x=>x!=S.i);i=p[Math.floor(Math.random()*p.length)]}play(S.m,i)}
+function play(m,i){S.m=m;S.i=i;S.rx=D[i];S.co=D[i].f.map(()=>0);S.a=null;draw()}
+function ch(i,d){if(S.a!==null)return;S.co[i]=Math.max(0,Math.min(12,S.co[i]+d));draw()}
+function sub(){S.a=same();if(S.a&&S.m!='n'&&S.m!='p')S.sc++;draw()}
+function nxt(){if(S.m=='t')newQ();else if(S.m=='e'){S.a?newQ():fin()}}
+function fin(){const t=S.m=='t'?`<p class=msg>${S.sc} / 10 問正解！</p>`:`<p class=msg>${S.sc} 問連続正解！</p>`;A.innerHTML=`<h2 style="text-align:center">結果</h2>${t}<div class=nv><button class=pri onclick=tmenu()>もう一度挑戦</button><button onclick=home()>ホームに戻る</button></div>`}
+function other(){const p=D.map((r,i)=>i).filter(i=>i!=S.i&&D[i].l==S.rx.l);play('p',p[Math.floor(Math.random()*p.length)])}
+function draw(){const r=S.rx,m=S.m;
+const head={p:'練習',t:'テスト',e:`エンドレス（${S.sc}問正解中）`,n:'粒子なしモード'}[m];
+let h=`<div class=hd><b>${head}</b><span>${'★'.repeat(r.l)}　${r.c}</span></div><h3 style="margin:6px 0">${r.n}</h3><div class=eq>`;
+r.f.forEach((f,i)=>{if(i)h+=i==r.nr?'<div class=ar>→</div>':'<div class=pl>+</div>';h+=`<div class=sp><div class=ct><button onclick="ch(${i},-1)">−</button><b>${S.co[i]||'　'}</b><button onclick="ch(${i},1)">＋</button></div><div class=fm>${fh(f)}</div></div>`});
+h+='</div>';
+if(m!='n')h+=`<div class=pt>${box('反応物',r.re)}${box('生成物',r.pr)}</div>`;
+h+='<div class=msg>';
+if(m=='p')h+=same()?'<span class=ok>🎉 完成！</span>':`<span class=hint>${balanced()?'原子の数は合っています。ほかの係数の組み合わせも考えてみよう':'＋／− で係数を調整して、左右の粒子の数をそろえよう'}</span>`;
+else if(S.a===null)h+='<button class=pri onclick=sub()>解答する</button>';
+else h+=S.a?'<span class=ok>⭕ 正解！</span>':`<span class=ng>❌ 不正解</span><div class=hint>正解：${es(r,r.k)}</div>`;
+h+='</div><div class=nv>';
+if(m=='p')h+='<button onclick=other()>別の問題へ</button><button onclick=plist()>一覧へ</button>';
+else if(S.a!==null){if(m=='n')h+='<button class=pri onclick=tmenu()>もう一度</button>';else h+=`<button class=pri onclick=nxt()>${m=='t'||S.a?'次の問題へ':'結果を見る'}</button>`}
+h+='<button onclick=home()>ホームに戻る</button></div>';A.innerHTML=h}
+home();
+</script></body></html>
